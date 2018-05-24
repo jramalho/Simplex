@@ -49,7 +49,7 @@ boolean faseI;
         return p;
     }
     
-    public Problema faseII(Problema p, boolean probArt){
+    public void faseII(Problema p, boolean probArt){
     boolean otima = false;
     boolean infinitas = false;
     boolean infactivel = false;
@@ -113,12 +113,71 @@ boolean faseI;
             }
             stop = true;
             break;
-        } 
+        }
+        System.out.println("Ĉnk não é maior ou igual a zero");
+        su.pontilhado();
+        float[] Y = su.calcY(B,su.obtCol(p.getRestricoes(), cnk));
+        System.out.println("Passo 4: calculo da direção Simplex");
+        System.out.print("Y =");
+        su.exibeVetor(Y);
+        
+        su.pontilhado();
+        System.out.println("Passo 5 : determinação do passo e var a sair da base");
+        if(su.veriInfinitaSolucoes(Y)){
+            otima = false;
+            infinitas = true;
+            infactivel = false;
+            stop = true;
+            break;
+        }
+        
+        float E = su.calcE(XB,Y);
+        System.out.println("\nE = " + E);
+        
+        B = su.attBase(B,XB,p.getRestricoes(),p.getBasicas(),p.getNao_basicas(),Y,E,cnk);
+        System.out.println("Atualizacao de Vars");
+        for(int i=0;i<p.getBasicas().length;i++){
+            System.out.print("B" + (i+1) + " = " + p.getBasicas()[i] + " ");
+        }
+        for(int i=0;i<p.getNao_basicas().length;i++){
+            System.out.print("N" + (i+1) + " = " + p.getNao_basicas()[i] + " ");
+        }
+        System.out.println("");
+        it++;    
+    }
+    if(otima){
+        su.pontilhado();
+        System.out.println("Matriz Solucao");
+        su.exibeMatriz(B);
+        System.out.println("");
+        for(int i=0;i<p.getBasicas().length;i++){
+            System.out.print("B" + (i+1) + " = " + p.getBasicas()[i] + " ");
+        }
+        for(int i=0;i<p.getNao_basicas().length;i++){
+            System.out.print("N" + (i+1) + " = " + p.getNao_basicas()[i] + " ");
+        }
+        if(!probArt){
+            float s = 0;
+            for(int i=0;i<p.getBasicas().length;i++){
+                s += p.getCustos()[p.getBasicas()[i]] * XB[i];
+            }
+            
+            if(p.getSinais()[0] == "max"){
+                s = -s;
+            }
+            su.pontilhado();
+            System.out.println("SOLUCAO FINAL");
+            System.out.print("XB =");
+            su.exibeVetor(XB);
+            System.out.println("\n F(x): " + s);
+        }
+    }
+    if (infinitas){
+        System.out.println("Problema não possui solucao otima infinita para f(x) → −∞");
+    }
+    if(infactivel){
+        System.out.println("Problema infactivel");
     }
     
-    
-    
-    
-    return p;
     }
 }

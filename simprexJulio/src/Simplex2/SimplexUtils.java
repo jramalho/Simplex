@@ -341,4 +341,55 @@ public void exibeVetor(float[] v){
        }
    return true;
    }
+   public float[] calcY(float[][] B, float[] vet){
+       return g.gauss(B,vet);
+   }
+   public boolean veriInfinitaSolucoes(float[] Y){
+       int m= Y.length;
+       for (int i=0;i<m;i++){
+           if(Y[i] > 0){
+           return false;
+           }
+       }
+       return true;
+   }
+   public float calcE(float[] xb, float[] y){
+       double result[] = new double[y.length];
+       System.out.print("E = min{");
+       for(int i=0;i<y.length;i++){
+           if (y[i]>0){
+               System.out.print("("+ xb[i] + "/" + y[i] + ")");
+               result[i] = xb[i]/y[i];
+           } else{
+               result[i] = -1.0;
+           }
+       }
+       System.out.print("}");
+       int k = 0;
+       double minimo = 0;
+       for (int i =0;i<y.length;i++){
+           if(result[i] >= 0.0){
+               minimo = result[i];
+               k=i;
+               break;
+           }
+       }
+       for (int i=0;i<y.length;i++){
+           if(result[i]<0){
+               continue;
+           }
+           if(result[i] < minimo){
+               k=i;
+               minimo = result[i];
+           }
+       }
+       return k;
+   }
+   public float[][] attBase(float[][] B, float[] XB, float[][] restricoes, int[] basicas, int[] nao_basicas, float[] Y, float E, int cnk){
+       int aux = basicas[Math.round(E)];
+       basicas[Math.round(E)] = nao_basicas[cnk];
+       nao_basicas[cnk] = aux;
+       return retiraB(restricoes,basicas);
+   }
+   
 }
