@@ -12,8 +12,54 @@ import java.util.ArrayList;
  * @author Jonathan
  */
 public class SimplexUtils {
+    Gauss g = new Gauss();
 public SimplexUtils(){}
 
+
+public float[][] calcTrans(float[][] A){
+    int m = A.length;
+    int n = A[0].length;
+    float[][] trans = new float[m][n];
+    
+    
+    for (int i =0;i<m;i++){
+        for(int j=0;j<n;j++){
+            trans[i][j] = A[i][j];
+        }
+    }
+    return trans;
+}
+public void pontilhado(){
+    System.out.println("-----------------------------------------------");
+}
+public float[][] copiaMatriz(float[][] A){
+    int m = A.length;
+    int n = A[0].length;
+    float[][] cp = new float[m][n];
+    
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+        cp[i][j] = A[i][j];
+        }
+    }
+    return cp;
+}
+public void exibeMatriz(float[][] A){
+    for(int i=0;i<A.length;i++){
+        for(int j=0;j<A.length;j++){
+            System.out.print(A[i][j] + "\t");
+        }
+        System.out.println("");
+    }
+}
+
+public void exibeVetor(float[] v){
+    System.out.print("( ");
+    for (int i =0;i<v.length;i++){
+        System.out.print(v[i] + " ");
+    }
+    System.out.println(")");
+}
     public void verificaB(Problema p){
         for (int i=0;i<p.getB().length;i++){
             if(p.getB()[i] < 0){
@@ -220,16 +266,79 @@ public SimplexUtils(){}
         return art;
     }
    
-    
-    
-    public Problema faseI(Problema p){
-        Problema art = criarProblemaArt(p); 
-        
-        
-        
-        
-        return p;
+    public float[][] retiraB(float[][] restricoes, int[] basicas){
+        float[][] B = new float[basicas.length][basicas.length];
+        for (int i=0;i<basicas.length;i++){
+            for (int j=0;j<basicas.length;j++){
+                B[i][j] = restricoes[i][basicas[j]];
+            }
+            System.out.println("");
+        }
+        return B;
     }
     
-    
+   public float[] calcXB(float B[][], float[] b){
+       return g.gauss(B,b);
+   }
+   
+   public float[] calcCB(float[] custos, float[] b, int[] basicas){
+       float[] CB = new float[b.length];
+       for (int i=0;i<b.length;i++){
+           CB[i] = custos[basicas[i]];
+       }
+       return CB;
+   }
+   
+   public float[] calcLambda(float[][] B, float[] b, float[] custos, int[] basicas){
+       float[] CB = calcCB(custos,b,basicas);
+       float[][] mTrans = calcTrans(B);
+       return g.gauss(mTrans,CB);
+   }
+   
+   public float multVet(float[] a, float[] b){
+       float sum = 0;
+       for (int i=0;i<a.length;i++){
+           sum += a[i]*b[i];
+       }
+       return sum;
+   }
+   public float[] obtCol(float[][] A, int index){
+       float ani[] = new float[A.length];
+       for (int i =0;i<A.length;i++){
+           ani[i] = A[i][index];
+       }
+       return ani;
+   }
+   
+   public float[] calcCustos(float[] lambda, float[][] restricoes, float[] custos, int[] nao_basicas){
+       float[] CNi = new float[nao_basicas.length];
+       for (int i=0;i<CNi.length;i++){
+           CNi[i] = custos[nao_basicas[i]] - multVet(lambda,obtCol(restricoes,nao_basicas[i]));
+       }
+       return CNi;
+   }
+   public int retCNk(float[] CNi){
+       int cnk = 0;
+       float menorValor = CNi[0];
+       for (int i=0;i<CNi.length;i++){
+           if(CNi[i] < menorValor){
+           menorValor = CNi[i];
+           cnk = i;
+       }
+       }
+       return cnk;
+   }
+   
+   public boolean isOtima(float[] CNi, int cnk){
+       return CNi[cnk] >= 0.0;
+   }
+   
+   public boolean varArtForaDaBase(int[] basicas, float[] custos){
+       for (int i=0;i<basicas.length;i++){
+           if(custos[basicas[i]] != 0.0){
+               return false;
+           }
+       }
+   return true;
+   }
 }

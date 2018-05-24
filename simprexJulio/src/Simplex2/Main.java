@@ -12,17 +12,17 @@ package Simplex2;
 public class Main {
     public static void main(String[] args) {
         Simplex s = new Simplex();
-        float[] C2 = {-1, -2};
+       float[] C2 = {3, -1};
         float[][] A2 = {
-            {1, 1},
-            {1, -1},
+            {2, 1},
+            {-1, 1},
             {-1, 1}
         };
-        float[] b2 = {6, 4, 4};
-        String[] s2 = {"min", ">=", "<=", "<="};
-        Problema p3 = new Problema(A2, C2, b2, s2); 
+        float[] b2 = {2,1,4};
+        String[] s2 = {"max", ">=", ">=", "<="};
+        Problema p = new Problema(A2, C2, b2, s2); 
         
-    s.simplex(p3);
+    s.simplex(p);
     
     }
     
